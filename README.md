@@ -11,12 +11,6 @@ Installation as a unity module via a git link in the PackageManager or direct ed
 "com.portaldweller.breakinfinity": "https://github.com/PortalDweller/BreakInfinity.cs.git",
 ```
 
-### As source
-
-The code can also be cloned or obtained as an archive from the releases page.
-
-Alternatively, just drop [BigDouble.cs](https://github.com/PortalDweller/BreakInfinity.cs/blob/master/BreakInfinity/BigDouble.cs) file into your `Scripts` folder and use `BigDouble` type instead of `double` in your scripts
-
 ## BigDouble
 `BigDouble` is a `double` replacement for very large numbers.
 

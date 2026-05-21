@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -15,7 +15,6 @@ namespace BreakInfinity.Tests
             Assert.That(BigDouble.NegativeInfinity.Equals(double.NegativeInfinity));
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Add(BinaryTestCase testCase)
@@ -23,7 +22,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual((d1, d2) => d1 + d2, (bd1, bd2) => bd1 + bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Subtract(BinaryTestCase testCase)
@@ -31,7 +29,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual((d1, d2) => d1 - d2, (bd1, bd2) => bd1 - bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Multiply(BinaryTestCase testCase)
@@ -39,7 +36,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual((d1, d2) => d1 * d2, (bd1, bd2) => bd1 * bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Divide(BinaryTestCase testCase)
@@ -47,7 +43,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual((d1, d2) => d1 / d2, (bd1, bd2) => bd1 / bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Negate(UnaryTestCase testCase)
@@ -55,7 +50,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(d => -d, bd => -bd);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Equality(BinaryTestCase testCase)
@@ -64,7 +58,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 == d2, (bd1, bd2) => bd1 == bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Inequality(BinaryTestCase testCase)
@@ -73,7 +66,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 != d2, (bd1, bd2) => bd1 != bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void GreaterThan(BinaryTestCase testCase)
@@ -81,7 +73,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 > d2, (bd1, bd2) => bd1 > bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void GreaterThanOrEqual(BinaryTestCase testCase)
@@ -89,7 +80,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 >= d2, (bd1, bd2) => bd1 >= bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void LessThan(BinaryTestCase testCase)
@@ -97,7 +87,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 < d2, (bd1, bd2) => bd1 < bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void LessThanOrEqual(BinaryTestCase testCase)
@@ -105,7 +94,6 @@ namespace BreakInfinity.Tests
             testCase.AssertComparison((d1, d2) => d1 <= d2, (bd1, bd2) => bd1 <= bd2);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void CompareTo(BinaryTestCase testCase)
@@ -113,7 +101,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual((d1, d2) => d1.CompareTo(d2), (bd1, bd2) => bd1.CompareTo(bd2));
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Log(BinaryTestCase testCase)
@@ -121,7 +108,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Log, (bd1, bd2) => BigDouble.Log(bd1, bd2));
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Pow(BinaryTestCase testCase)
@@ -129,7 +115,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Pow, BigDouble.Pow);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Abs(UnaryTestCase testCase)
@@ -137,7 +122,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Abs, BigDouble.Abs);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Ceiling(UnaryTestCase testCase)
@@ -145,7 +129,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Ceiling, BigDouble.Ceiling);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Cosh(UnaryTestCase testCase)
@@ -154,7 +137,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Cosh, BigDouble.Cosh, 1E-13);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Exp(UnaryTestCase testCase)
@@ -163,7 +145,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Exp, BigDouble.Exp, 1E-13);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Floor(UnaryTestCase testCase)
@@ -171,7 +152,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Floor, BigDouble.Floor);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Log10(UnaryTestCase testCase)
@@ -179,7 +159,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Log10, d => BigDouble.Log10(d));
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Max(BinaryTestCase testCase)
@@ -187,7 +166,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Max, BigDouble.Max);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalBinaryTestCases))]
         [TestCaseSource(nameof(GeneralBinaryTestCases))]
         public void Min(BinaryTestCase testCase)
@@ -195,7 +173,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Min, BigDouble.Min);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Round(UnaryTestCase testCase)
@@ -203,7 +180,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Round, BigDouble.Round);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Sign(UnaryTestCase testCase)
@@ -219,7 +195,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(d => Math.Sign(d), d => BigDouble.Sign(d));
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Sinh(UnaryTestCase testCase)
@@ -228,7 +203,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Sinh, BigDouble.Sinh, 1E-13);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Tanh(UnaryTestCase testCase)
@@ -237,7 +211,6 @@ namespace BreakInfinity.Tests
             testCase.AssertEqual(Math.Tanh, BigDouble.Tanh, 1E-13);
         }
 
-        [Test]
         [TestCaseSource(nameof(FundamentalUnaryTestCases))]
         [TestCaseSource(nameof(GeneralUnaryTestCases))]
         public void Truncate(UnaryTestCase testCase)
@@ -386,7 +359,7 @@ namespace BreakInfinity.Tests
             }
 
             return bigDouble.Exponent > Math.Log10(double.MaxValue)
-                   || bigDouble.Exponent < Math.Log10(double.Epsilon);
+                   || bigDouble.Exponent < Math.Log10(2.2250738585072014e-308);
         }
 
         public class UnaryTestCase
@@ -451,3 +424,4 @@ namespace BreakInfinity.Tests
         }
     }
 }
+

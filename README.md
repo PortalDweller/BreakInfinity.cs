@@ -3,7 +3,25 @@ A C# port of [break_infinity.js](https://github.com/Patashu/break_infinity.js) -
 
 ## Installation
 
-Just drop [BigDouble.cs](https://github.com/Razenpok/BreakInfinity.cs/blob/master/BreakInfinity/BigDouble.cs) file into your `Scripts` folder and use `BigDouble` type instead of `double` in your scripts
+### In the form of a unity module
+
+Installation as a unity module via a git link in the PackageManager or direct editing of `Packages/manifest.json` is supported:
+
+```
+"com.portaldweller.breakinfinity": "https://github.com/PortalDweller/BreakInfinity.cs.git",
+```
+
+By default, the latest release version is used. If you need a version "in development" with the latest changes, you should switch to the `develop` branch:
+
+```
+"com.portaldweller.breakinfinity": "https://github.com/PortalDweller/BreakInfinity.cs.git#develop",
+```
+
+### As source
+
+The code can also be cloned or obtained as an archive from the releases page.
+
+Alternatively, just drop [BigDouble.cs](https://github.com/PortalDweller/BreakInfinity.cs/blob/master/BreakInfinity/BigDouble.cs) file into your `Scripts` folder and use `BigDouble` type instead of `double` in your scripts
 
 ## BigDouble
 `BigDouble` is a `double` replacement for very large numbers.

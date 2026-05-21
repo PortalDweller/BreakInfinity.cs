@@ -201,7 +201,7 @@ namespace BreakInfinity
             }
 
             var resultrounded = Math.Round(result);
-            if (Math.Abs(resultrounded - result) < 1e-10) return resultrounded;
+            if (Math.Abs(resultrounded - result) < 1e-9 * Math.Max(1.0, Math.Abs(result))) return resultrounded;
             return result;
         }
 
@@ -625,9 +625,12 @@ namespace BreakInfinity
 
         public static double Log(BigDouble value, double @base)
         {
-            if (IsZero(@base))
+            // Delegate edge cases (zero/NaN/infinity base, base == 1, non-finite value)
+            // to Math.Log to match IEEE 754-2019 semantics (e.g. log(1, 0) = -0).
+            if (IsZero(@base) || double.IsNaN(@base) || double.IsInfinity(@base) || @base == 1.0
+                || IsNaN(value) || IsInfinity(value))
             {
-                return double.NaN;
+                return Math.Log(value.ToDouble(), @base);
             }
 
             //UN-SAFETY: Most incremental game cases are log(number := 1 or greater, base := 2 or greater). We assume this to be true and thus only need to return a number, not a BigDouble, and don't do any other kind of error checking.
@@ -682,10 +685,31 @@ namespace BreakInfinity
         public static BigDouble Pow(BigDouble value, double power)
         {
             // TODO: power can be greater that long.MaxValue, which can bring troubles in fast track
+
+            // IEEE 754-2019 special cases (these win even over NaN operands).
+            if (power == 0.0) return One;
+            if (value.Mantissa == 1.0 && value.Exponent == 0) return One; // pow(1, anything) = 1
+            if (double.IsNaN(power) || IsNaN(value)) return NaN;
+            if (value.Mantissa == 0.0)
+            {
+                if (power < 0) return PositiveInfinity;
+                return Zero; // power > 0 (power == 0 handled above)
+            }
+            if (IsInfinity(value) || double.IsInfinity(power))
+            {
+                return new BigDouble(Math.Pow(value.ToDouble(), power));
+            }
             var powerIsInteger = IsInteger(power);
-            if (value < 0 && !powerIsInteger)
+            if (value.Mantissa < 0 && !powerIsInteger)
             {
                 return NaN;
+            }
+            if (value.Mantissa < 0 && powerIsInteger)
+            {
+                // PowInternal's slow path uses Math.Log10(mantissa) which is NaN for
+                // negative mantissas. Compute |value|^power and apply sign manually.
+                var absResult = PowInternal(Abs(value), power);
+                return Math.Abs(power % 2) == 1 ? -absResult : absResult;
             }
             return Is10(value) && powerIsInteger ? Pow10(power) : PowInternal(value, power);
         }
@@ -707,7 +731,9 @@ namespace BreakInfinity
             if (IsInteger(temp) && IsFinite(temp) && Math.Abs(temp) < ExpLimit)
             {
                 newMantissa = Math.Pow(value.Mantissa, other);
-                if (IsFinite(newMantissa))
+                // Skip when mantissa under/overflowed: the log-based path below preserves
+                // information that would otherwise be lost.
+                if (IsFinite(newMantissa) && newMantissa != 0.0)
                 {
                     return Normalize(newMantissa, (long) temp);
                 }
@@ -715,6 +741,37 @@ namespace BreakInfinity
 
             //Same speed and usually more accurate. (An arbitrary-precision version of this calculation is used in break_break_infinity.js, sacrificing performance for utter accuracy.)
 
+            // Slow path: combined-log calculation. Only entered when the fast track failed
+            // (huge `temp`, or mantissa under/overflow), so the extra Math.Log10 is paid only
+            // in those edge cases. result = 10^(other * (log10(|mantissa|) + exponent))
+            var totalLog = other * Math.Log10(Math.Abs(value.Mantissa)) + (double) value.Exponent * other;
+            if (IsFinite(totalLog) && Math.Abs(totalLog) >= ExpLimit)
+            {
+                // Result exponent exceeds BigDouble's representable range; saturate.
+                var negate = value.Mantissa < 0 && IsInteger(other) && Math.Abs(other % 2) == 1;
+                if (totalLog > 0)
+                {
+                    return negate ? NegativeInfinity : PositiveInfinity;
+                }
+                return negate ? -Zero : Zero;
+            }
+            if (IsFinite(totalLog))
+            {
+                // Split totalLog into integer (new exponent) and fractional (new mantissa) parts
+                // so that a huge `other` doesn't cause Math.Pow(10, p*log10(m)) to underflow.
+                var newexp = Math.Floor(totalLog);
+                newMantissa = Math.Pow(10, totalLog - newexp);
+                if (IsFinite(newMantissa) && newMantissa != 0.0)
+                {
+                    if (value.Mantissa < 0 && IsInteger(other) && Math.Abs(other % 2) == 1)
+                    {
+                        newMantissa = -newMantissa;
+                    }
+                    return Normalize(newMantissa, (long) newexp);
+                }
+            }
+
+            // Original residue-based path (kept as a final fallback).
             var newexponent = Math.Truncate(temp);
             var residue = temp - newexponent;
             newMantissa = Math.Pow(10, other * Math.Log10(value.Mantissa) + residue);
@@ -791,16 +848,34 @@ namespace BreakInfinity
 
         public static BigDouble Sinh(BigDouble value)
         {
+            if (IsNaN(value)) return NaN;
+            if (IsInfinity(value)) return value;
+            // For very small x, sinh(x) ≈ x; the (Exp(x) - Exp(-x)) formula loses all precision.
+            if (value.Exponent < -MaxSignificantDigits) return value;
+            // For very large |x|, Exp(x) overflows; sinh saturates to ±infinity.
+            if (value.Exponent > MaxSignificantDigits)
+                return value.Mantissa > 0 ? PositiveInfinity : NegativeInfinity;
             return (Exp(value) - Exp(-value)) / 2;
         }
 
         public static BigDouble Cosh(BigDouble value)
         {
+            if (IsNaN(value)) return NaN;
+            if (IsInfinity(value)) return PositiveInfinity;
+            if (value.Exponent > MaxSignificantDigits) return PositiveInfinity;
             return (Exp(value) + Exp(-value)) / 2;
         }
 
         public static BigDouble Tanh(BigDouble value)
         {
+            if (IsNaN(value)) return NaN;
+            if (IsInfinity(value)) return IsPositiveInfinity(value) ? One : -One;
+            // For very small x, tanh(x) ≈ x.
+            if (value.Exponent < -MaxSignificantDigits) return value;
+            // For very large |x|, tanh saturates to ±1 (the (Exp - Exp)/(Exp + Exp) formula
+            // would otherwise produce ∞/∞ = NaN once Exp overflows).
+            if (value.Exponent > MaxSignificantDigits)
+                return value.Mantissa > 0 ? One : -One;
             return Sinh(value) / Cosh(value);
         }
 

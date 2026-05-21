@@ -11,12 +11,6 @@ Installation as a unity module via a git link in the PackageManager or direct ed
 "com.portaldweller.breakinfinity": "https://github.com/PortalDweller/BreakInfinity.cs.git",
 ```
 
-By default, the latest release version is used. If you need a version "in development" with the latest changes, you should switch to the `develop` branch:
-
-```
-"com.portaldweller.breakinfinity": "https://github.com/PortalDweller/BreakInfinity.cs.git#develop",
-```
-
 ### As source
 
 The code can also be cloned or obtained as an archive from the releases page.
